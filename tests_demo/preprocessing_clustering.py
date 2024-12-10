@@ -1,5 +1,5 @@
 # Core scverse libraries
-import scanpy-codon as sc
+import scanpy_codon as sc
 import anndata as ad
 
 # Data retrieval

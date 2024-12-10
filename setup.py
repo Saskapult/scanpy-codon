@@ -84,11 +84,11 @@ class BuildCodonExt(build_ext):
         self.distribution.codon_lib = extension_path
 
 setup(
-    name='scanpy',
+    name='scanpy_codon',
     version='0.1',
-    packages=['scanpy'],
+    packages=['scanpy_codon'],
     ext_modules=[
-        CodonExtension('scanpy', 'src/scanpy/__init__.py'),
+        CodonExtension('scanpy_codon', 'src/scanpy_codon/__init__.py'),
     ],
     cmdclass={'build_ext': BuildCodonExt}
 )
