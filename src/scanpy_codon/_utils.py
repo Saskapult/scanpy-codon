@@ -25,3 +25,13 @@ def elem_mul(x, y):
     return da.map_blocks(elem_mul, x, y)
     # else:
     #     raise NotImplementedError
+
+
+def _check_use_raw(
+    adata, use_raw: bool, layer: str = None
+) -> bool:
+    if use_raw is not None:
+        return use_raw
+    if layer is not None:
+        return False
+    return adata.raw is not None

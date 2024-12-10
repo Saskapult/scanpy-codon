@@ -5,7 +5,7 @@ import anndata as ad
 # Data retrieval
 import pooch
 
-sc.settings.set_figure_params(dpi=50, facecolor="white")
+sc.get_settings().set_figure_params(dpi=50, facecolor="white")
 
 EXAMPLE_DATA = pooch.create(
     path=pooch.os_cache("scverse_tutorials"),

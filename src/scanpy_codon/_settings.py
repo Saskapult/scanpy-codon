@@ -2,23 +2,18 @@ from time import time
 from python import inspect
 
 
-@dataclass(python=True)
-class Verbosity():
-    error = 0
-    warning = 1
-    info = 2
-    hint = 3
-    debug = 4
+# # @dataclass(python=True)
+# class Verbosity():
+#     error = 0
+#     warning = 1
+#     info = 2
+#     hint = 3
+#     debug = 4
 
 
 @dataclass(python=True)
 class ScanpyConfig:
-    """\
-    Config manager for scanpy.
-    """
-
     N_PCS: int
-    """Default number of principal components to use."""
     verbosity: int
     plot_suffix: str
     file_format_data: str
@@ -37,15 +32,13 @@ class ScanpyConfig:
     _frameon: bool
     _vector_friendly: bool
     _low_resolution_warning: bool
-    n_pcs: int
-
     _start: float
     _previous_time: float
     _previous_memory_usage: int
 
     def __init__(
         self,
-        verbosity: int = Verbosity.warning,
+        verbosity: int = 1,
         plot_suffix: str = "",
         file_format_data: str = "h5ad",
         file_format_figs: str = "pdf",
