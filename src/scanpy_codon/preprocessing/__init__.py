@@ -9,3 +9,4 @@ from ._simple import (
     # sqrt,
     # subsample,
 )
+from ._pca import pca
