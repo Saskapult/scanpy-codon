@@ -115,38 +115,13 @@ def _get_array_values(
 
 def _get_obs_rep(
     adata,
-    use_raw: bool = False,
-    layer: str = None,
-    obsm: str = None,
-    obsp: str = None,
-):
-    """
-    Choose array aligned with obs annotation.
-    """
-    # https://github.com/scverse/scanpy/issues/1546
-    if not isinstance(use_raw, bool):
-        raise TypeError(f"use_raw expected to be bool, was {type(use_raw)}.")
+    # use_raw: bool = False,
+    # layer: str = None,
+    # obsm: str = None,
+    # obsp: str = None,
+) -> pyobj:
+    return adata.X
 
-    is_layer = layer is not None
-    is_raw = use_raw is not False
-    is_obsm = obsm is not None
-    is_obsp = obsp is not None
-    choices_made = sum((is_layer, is_raw, is_obsm, is_obsp))
-    assert choices_made in {0, 1}
-    if choices_made == 0:
-        return adata.X
-    if is_layer:
-        return adata.layers[layer]
-    if use_raw:
-        return adata.raw.X
-    if is_obsm:
-        return adata.obsm[obsm]
-    if is_obsp:
-        return adata.obsp[obsp]
-    raise AssertionError(
-        "That was unexpected. Please report this bug at:\n\n\t"
-        "https://github.com/scverse/scanpy/issues"
-    )
 
 
 def obs_df(
@@ -213,10 +188,11 @@ def obs_df(
     return df
 
 
+@python
 def _check_mask(
     data,
-    mask,
-    dim,
+    mask: str,
+    dim: str,
 ):
     if isinstance(mask, str):
         if not isinstance(data, anndata.AnnData):

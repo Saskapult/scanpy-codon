@@ -92,6 +92,7 @@ def _collect_datasets(dsets: dict, group):
 @python
 def _read_v3_10x_h5(filename: str):
     import h5py
+    import numpy as np
 
     def _collect_datasets(dsets: dict, group):
         for k, v in group.items():

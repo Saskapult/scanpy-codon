@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-	n = 2
+	n = 32
 	
 	def get_anndata():
 		EXAMPLE_DATA = pooch.create(
@@ -38,19 +38,20 @@ def main():
 		dt = en - st
 		return dt
 	
-	# print("Benching scanpy...")
-	# import scanpy as sc
-	# dts_scanpy = bench_n(get_anndata, pca, n)
-	# # dts_scanpy = [4000.0, 26477.0]
-	# print_dt_stats(dts_scanpy)
+	print("Benching scanpy...")
+	import scanpy as sc
+	dts_scanpy = bench_n(get_anndata, pca, n)
+	# dts_scanpy = [4000.0, 26477.0]
+	print_dt_stats(dts_scanpy)
+	print(dts_scanpy)
 
 
-	print("Benching scanpy_codon...")
-	# del sc
-	import scanpy_codon as sc
-	print(dir(sc))
-	dts_scanpy_codon = bench_n(get_anndata, pca, n)
-	print_dt_stats(dts_scanpy_codon)
+	# print("Benching scanpy_codon...")
+	# # del sc
+	# import scanpy_codon as sc
+	# print(dir(sc))
+	# dts_scanpy_codon = bench_n(get_anndata, pca, n)
+	# print_dt_stats(dts_scanpy_codon)
 
 
 def print_dt_stats(dts):

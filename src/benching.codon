@@ -1,0 +1,75 @@
+
+from python import anndata as ad
+from python import pooch
+import time
+from python import numpy as np 
+from python import matplotlib.pyplot as plt
+import scanpy_codon as sc
+
+
+def print_dt_stats(dts):
+	worst = max(dts)
+	best = min(dts)
+	mean = sum(dts) / len(dts)
+	median = sorted(dts)[int(len(dts)/2)]
+	
+	print(f"Best:   {best: >8.2f}s")
+	print(f"Worst:  {worst: >8.2f}s")
+	print(f"Mean:   {mean: >8.2f}s")
+	print(f"Median: {median: >8.2f}s")
+
+
+def bench_n(s, f, n):
+	adata = s()
+	dts = []
+	# print(f"{0} / {n}", end="")
+	print(f"{0} / {n}")
+	for i in range(0, n):
+		a = adata.copy() # Do not mutate adata
+		dts.append(f(a))
+		# print(f"{i+1} / {n}", end="\r")
+		print(f"{i+1} / {n}")
+	# print()
+	return dts
+
+
+def main():
+	n = 32
+	
+	def get_anndata():
+		EXAMPLE_DATA = pooch.create(
+			path=pooch.os_cache("scverse_tutorials"),
+			base_url="doi:10.6084/m9.figshare.22716739.v1/",
+		)
+		EXAMPLE_DATA.load_registry_from_doi()
+
+		samples = {
+			"s1d1": "s1d1_filtered_feature_bc_matrix.h5",
+			"s1d3": "s1d3_filtered_feature_bc_matrix.h5",
+		}
+		adatas = {}
+
+		for sample_id, filename in samples.items():
+			path = EXAMPLE_DATA.fetch(filename)
+			sample_adata = sc.read_10x_h5(path)
+			sample_adata.var_names_make_unique()
+			adatas[sample_id] = sample_adata
+
+		adata = ad.concat(adatas, label="sample")
+		adata.obs_names_make_unique()
+		return adata
+	def pca(adata):
+		st = time.time()
+		sc.pca_ladder(adata)
+		en = time.time()
+		dt = en - st
+		return dt
+	
+	print("Benching scanpy_codon...")
+	dts_scanpy_codon = bench_n(get_anndata, pca, n)
+	print_dt_stats(dts_scanpy_codon)
+	print(dts_scanpy_codon)
+
+
+if __name__ == "__main__":
+	main()

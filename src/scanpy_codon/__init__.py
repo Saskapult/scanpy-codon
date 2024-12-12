@@ -20,6 +20,10 @@ def read_10x_h5(
 	print("Ladder 1")
 	return read_10x_h5(filename)
 
+def pca_ladder(adata):
+	import preprocessing as pp
+	return pp.pca(adata)
+
 def add_these(a: int, b: int):
 	return a + b
 
