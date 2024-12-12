@@ -11,6 +11,17 @@ import logging
 
 # from .readwrite import read, read_10x_h5, read_10x_mtx, read_visium, write
 from .readwrite import read_10x_h5
+# For some reason, codon does not export anything not directly defined in this file
+# In order to benchmark this I have made a 'ladder' to call functions
+def read_10x_h5(
+	filename: str,
+):
+	from .readwrite import read_10x_h5
+	print("Ladder 1")
+	return read_10x_h5(filename)
+
+def add_these(a: int, b: int):
+	return a + b
 
 # Seems unable to export globals, deploying stupid solution
 @python

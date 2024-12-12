@@ -90,16 +90,24 @@ def _collect_datasets(dsets: dict, group):
 
 
 @python
-def _read_v3_10x_h5(filename, start=None):
-    """
-    Read hdf5 file from Cell Ranger v3 or later versions.
-    """
+def _read_v3_10x_h5(filename: str):
+    import h5py
+
+    def _collect_datasets(dsets: dict, group):
+        for k, v in group.items():
+            if isinstance(v, h5py.Dataset):
+                dsets[k] = v[()]
+            else:
+                _collect_datasets(dsets, v)
+
     with h5py.File(str(filename), "r") as f:
         try:
             dsets = {}
             _collect_datasets(dsets, f["matrix"])
 
-            import scipy.sparse
+            # from python import scipy.sparse
+            import scipy.sparse as sparse
+            import anndata
 
             M, N = dsets["shape"]
             data = dsets["data"]
@@ -133,7 +141,7 @@ def _read_v3_10x_h5(filename, start=None):
                     (
                         feature_metadata_name,
                         dsets[feature_metadata_name].astype(
-                            bool if feature_metadata_item.dtype.kind == "b" else str
+                            bool# if feature_metadata_item.dtype.kind == "b" else str
                         ),
                     )
                     for feature_metadata_name, feature_metadata_item in f["matrix"][
@@ -156,35 +164,35 @@ def _read_v3_10x_h5(filename, start=None):
                 obs=obs_dict,
                 var=var_dict,
             )
-            logg.info("", time=start)
+            # logg.info("", time=start)
             return adata
         except KeyError:
             raise Exception("File is missing one or more required datasets.")
 
 
-
 def read_10x_h5(
     filename: str,
-    genome: str = None,
-    gex_only: bool = True,
-    backup_url: str = None,
+    # genome: str = None,
+    # gex_only: bool = True,
+    # backup_url: str = None,
 ):
-    start = logg.info(f"reading {filename}")
-    is_present = _check_datafile_present_and_download(filename, backup_url=backup_url)
+    print("Ladder 2")
+    # start = logg.info(f"reading {filename}")
+    is_present = _check_datafile_present_and_download(filename)
     if not is_present:
         logg.debug(f"... did not find original file {filename}")
     with h5py.File(str(filename), "r") as f:
         v3 = "/matrix" in f
-    adata = _read_v3_10x_h5(filename, start=start)
-    if genome:
-        if genome not in adata.var["genome"].values:
-            raise ValueError(
-                f"Could not find data corresponding to genome '{genome}' in '{filename}'. "
-                f'Available genomes are: {list(adata.var["genome"].unique())}.'
-            )
-        adata = adata[:, adata.var["genome"] == genome]
-    if gex_only:
-        adata = adata[:, adata.var["feature_types"] == "Gene Expression"]
+    adata = _read_v3_10x_h5(filename)
+    # if genome:
+    #     if genome not in adata.var["genome"].values:
+    #         raise ValueError(
+    #             f"Could not find data corresponding to genome '{genome}' in '{filename}'. "
+    #             f'Available genomes are: {list(adata.var["genome"].unique())}.'
+    #         )
+    #     adata = adata[:, adata.var["genome"] == genome]
+    # if gex_only:
+    #     adata = adata[:, adata.var["feature_types"] == "Gene Expression"]
     if adata.is_view:
         adata = adata.copy()
     return adata
